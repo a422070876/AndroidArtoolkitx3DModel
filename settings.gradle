@@ -1,0 +1,2 @@
+include ':app', ':arxj', ':engine'
+rootProject.name='AndroidArtoolkitx3DModel'
