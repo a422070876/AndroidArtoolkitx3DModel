@@ -645,6 +645,7 @@ static void *cparamSearchWorker(THREAD_HANDLE_T *threadHandle)
                         } // !curl_easy_setopt()
                     } // !curl_easy_init()
                 } // !curlHandle
+
                 if (result == CPARAM_SEARCH_STATE_IN_PROGRESS) {
 
                     // Network OK, proceed.
