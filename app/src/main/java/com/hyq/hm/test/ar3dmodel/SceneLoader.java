@@ -49,7 +49,25 @@ public class SceneLoader implements LoaderTask.Callback {
         this.activity = activity;
         this.paramUri = paramUri;
     }
+    private float modelScale = -1;
 
+    public float getModelScale() {
+        return modelScale;
+    }
+
+    public void setModelScale(float modelScale) {
+        this.modelScale = modelScale;
+    }
+
+    private float[] modelRotation;
+
+    public float[] getModelRotation() {
+        return modelRotation;
+    }
+
+    public void setModelRotation(float[] modelRotation) {
+        this.modelRotation = modelRotation;
+    }
 
     public void init() {
         if (paramUri == null){
@@ -59,13 +77,13 @@ public class SceneLoader implements LoaderTask.Callback {
         Uri uri = paramUri;
         Log.i("Object3DBuilder", "Loading model " + uri + ". async and parallel..");
         if (uri.toString().toLowerCase().endsWith(".obj")) {
-            new WavefrontLoaderTask(activity, uri, this).execute();
+            new WavefrontLoaderTask(uri, this).execute();
         } else if (uri.toString().toLowerCase().endsWith(".stl")) {
             Log.i("Object3DBuilder", "Loading STL object from: "+uri);
-            new STLLoaderTask(activity, uri, this).execute();
+            new STLLoaderTask(uri, this).execute();
         } else if (uri.toString().toLowerCase().endsWith(".dae")) {
             Log.i("Object3DBuilder", "Loading Collada object from: "+uri);
-            new ColladaLoaderTask(activity, uri, this).execute();
+            new ColladaLoaderTask(uri, this).execute();
         }
     }
     /**

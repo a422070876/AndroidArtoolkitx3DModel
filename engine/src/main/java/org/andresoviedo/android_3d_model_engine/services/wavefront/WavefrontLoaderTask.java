@@ -24,8 +24,8 @@ import java.util.List;
 
 public class WavefrontLoaderTask extends LoaderTask {
 
-    public WavefrontLoaderTask(final Activity parent, final Uri uri, final Callback callback) {
-        super(parent, uri, callback);
+    public WavefrontLoaderTask(final Uri uri, final Callback callback) {
+        super(uri, callback);
     }
 
     @Override

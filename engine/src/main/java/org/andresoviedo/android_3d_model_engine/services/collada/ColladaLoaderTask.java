@@ -18,8 +18,8 @@ public class ColladaLoaderTask extends LoaderTask {
 
     AnimatedModelData modelData;
 
-    public ColladaLoaderTask(Activity parent, Uri uri, Callback callback) {
-        super(parent, uri, callback);
+    public ColladaLoaderTask(Uri uri, Callback callback) {
+        super(uri, callback);
     }
 
     @SuppressWarnings("unchecked")

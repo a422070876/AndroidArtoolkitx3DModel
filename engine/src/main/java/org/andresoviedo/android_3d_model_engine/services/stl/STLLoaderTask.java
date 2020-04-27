@@ -27,8 +27,8 @@ public final class STLLoaderTask extends LoaderTask {
 
     private STLFileReader stlFileReader;
 
-    public STLLoaderTask(Activity parent, Uri uri, Callback callback) {
-        super(parent, uri, callback);
+    public STLLoaderTask(Uri uri, Callback callback) {
+        super(uri, callback);
     }
 
     @Override

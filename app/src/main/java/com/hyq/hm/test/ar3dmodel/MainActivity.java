@@ -18,14 +18,12 @@ public class MainActivity extends ARActivity {
         URL.setURLStreamHandlerFactory(new AndroidURLStreamHandlerFactory());
     }
 
-    private SceneLoader scene;
+//    private SceneLoader scene;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         ContentUtils.provideAssets(this);
-        scene = new SceneLoader(this, Uri.parse("assets://" + getPackageName() + "/models/cowboy.dae"));
-        scene.init();
     }
 
     /**
@@ -33,7 +31,7 @@ public class MainActivity extends ARActivity {
      */
     @Override
     protected ARRenderer supplyRenderer() {
-        return new ModelRenderer(this,scene);
+        return new ModelRenderer(this);
     }
 
     /**

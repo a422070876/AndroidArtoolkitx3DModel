@@ -1,8 +1,11 @@
 package com.hyq.hm.test.ar3dmodel;
 
+import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.opengl.GLES20;
 import android.util.Log;
+import android.util.SparseArray;
 
 import org.andresoviedo.android_3d_model_engine.drawer.DrawerFactory;
 import org.andresoviedo.android_3d_model_engine.model.Object3D;
@@ -56,7 +59,8 @@ public class ModelRenderer extends ARRenderer {
      */
     private boolean fatalException = false;
 
-    private SceneLoader scene;
+
+    private Activity activity;
 
 
     private static final Trackable trackables[] = new Trackable[]{
@@ -64,6 +68,16 @@ public class ModelRenderer extends ARRenderer {
             new Trackable("kanji", 80.0f)
     };
     private int trackableUIDs[] = new int[trackables.length];
+
+    private static final String modelNames[] = new String[]{
+            "cowboy.dae",
+            "ToyPlane.obj"
+    };
+    private static final float modelScales[] = new float[]{
+            20,
+            100
+    };
+    private SparseArray<SceneLoader> scenes = new SparseArray<>();
     /**
      * Markers can be configured here.
      */
@@ -73,6 +87,13 @@ public class ModelRenderer extends ARRenderer {
         for (Trackable trackable : trackables) {
             trackableUIDs[i] = ARController.getInstance().addTrackable("single;Data/" + trackable.getName() + ".patt;" + trackable.getWidth());
             if (trackableUIDs[i] < 0) return false;
+            SceneLoader scene = new SceneLoader(activity, Uri.parse("assets://" + activity.getPackageName() + "/models/"+modelNames[i]));
+            scene.setModelScale(modelScales[i]);
+            scene.init();
+            if(i == 1){
+                scene.setModelRotation(new float[]{0,90,0});
+            }
+            scenes.put(trackableUIDs[i],scene);
             i++;
         }
         return true;
@@ -84,11 +105,11 @@ public class ModelRenderer extends ARRenderer {
      * Construct a new renderer for the specified surface view
      *            the 3D window
      */
-    public ModelRenderer(Context context, SceneLoader scene) {
-        this.scene = scene;
+    public ModelRenderer(Activity activity) {
+        this.activity = activity;
         // This component will draw the actual models using OpenGL
         try {
-            drawer = new DrawerFactory(context);
+            drawer = new DrawerFactory(activity);
         } catch (IllegalAccessException | IOException e) {
             e.printStackTrace();
         }
@@ -132,7 +153,7 @@ public class ModelRenderer extends ARRenderer {
         // Enable not drawing out of view port
         GLES20.glEnable(GLES20.GL_SCISSOR_TEST);
 
-        if (scene == null) {
+        if (scenes.size() == 0) {
             // scene not ready
             return;
         }
@@ -142,13 +163,16 @@ public class ModelRenderer extends ARRenderer {
             float[] modelViewMatrix = new float[16];
             if (ARController.getInstance().queryTrackableVisibilityAndTransformation(trackableUID, modelViewMatrix)) {
                 float[] projectionMatrix = ARController.getInstance().getProjectionMatrix(10.0f, 10000.0f);
-                onDrawFrame(projectionMatrix,modelViewMatrix);
+                onDrawFrame(projectionMatrix,modelViewMatrix,scenes.get(trackableUID));
             }
         }
 
 
     }
-    private void onDrawFrame(float[] projectionMatrix,float[] modelViewMatrix){
+    private void onDrawFrame(float[] projectionMatrix,float[] modelViewMatrix,SceneLoader scene){
+        if(scene == null){
+            return;
+        }
         try {
             float[] colorMask = null;
             if (scene.isBlendingEnabled()) {
@@ -166,13 +190,13 @@ public class ModelRenderer extends ARRenderer {
             scene.onDrawFrame();
 
 
-            this.onDrawFrame(modelViewMatrix, projectionMatrix,colorMask, cameraPosInWorldSpace);
+            this.onDrawFrame(modelViewMatrix, projectionMatrix,colorMask, cameraPosInWorldSpace,scene);
         }catch (Exception ex){
             Log.e("ModelRenderer", "Fatal exception: "+ex.getMessage(), ex);
             fatalException = true;
         }
     }
-    private void onDrawFrame(float[] viewMatrix, float[] projectionMatrix,float[] colorMask,float[] cameraPosInWorldSpace) {
+    private void onDrawFrame(float[] viewMatrix, float[] projectionMatrix,float[] colorMask,float[] cameraPosInWorldSpace,SceneLoader scene) {
         if (scene.getObjects().isEmpty()){
             return;
         }
@@ -188,8 +212,16 @@ public class ModelRenderer extends ARRenderer {
                 if (drawerObject == null){
                     continue;
                 }
-                float scale = 20;
-                objData.setScale(new float[]{scale,scale,scale});
+                float scale = scene.getModelScale();
+                if(scale > 0){
+                    objData.setScale(new float[]{scale,scale,scale});
+
+                }
+                float[] rotation = scene.getModelRotation();
+                if(rotation != null){
+                    objData.setRotation(rotation);
+                }
+
                 if (!infoLogged.containsKey(objData)) {
                     Log.v("ModelRenderer","Drawing model: "+objData.getId());
                     infoLogged.put(objData, true);
