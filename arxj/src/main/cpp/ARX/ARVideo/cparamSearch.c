@@ -632,13 +632,13 @@ static void *cparamSearchWorker(THREAD_HANDLE_T *threadHandle)
                                         ARLOGe("Error setting CURL options: %s (%d)\n", curl_easy_strerror(curlErr), curlErr);
                                         result = CPARAM_SEARCH_STATE_FAILED_ERROR;
                                     } else {
-                                        curlErr = curl_easy_perform(curlHandle);
-                                        if (curlErr != CURLE_OK) {
-                                            // No need to report error, since we expect it (e.g.) when wifi and cell data are off.
-                                            // Typical first error in these cases is failure to resolve the hostname.
-                                            //ARLOGe("Error performing CURL network test: %s (%d). %s.\n", curl_easy_strerror(curlErr), curlErr, curlErrorBuf);
+//                                        curlErr = curl_easy_perform(curlHandle);
+//                                        if (curlErr != CURLE_OK) {
+//                                            // No need to report error, since we expect it (e.g.) when wifi and cell data are off.
+//                                            // Typical first error in these cases is failure to resolve the hostname.
+//                                            //ARLOGe("Error performing CURL network test: %s (%d). %s.\n", curl_easy_strerror(curlErr), curlErr, curlErrorBuf);
                                             result = CPARAM_SEARCH_STATE_FAILED_NO_NETWORK;
-                                        }
+//                                        }
                                     }
                                 }
                             } // internetState
