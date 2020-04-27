@@ -24,6 +24,7 @@ public class MainActivity extends ARActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         ContentUtils.provideAssets(this);
+
     }
 
     /**
